@@ -1,0 +1,71 @@
+version: '3'
+
+networks:
+  umbrella:
+
+services:
+  site:
+    build:
+      context: ./dockerfiles
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: cct_nginx
+    ports:
+      - ${APP_PORT:-8080}:80
+    volumes:
+      - ./:/var/www/html:delegated
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - umbrella
+
+  mysql:
+    image: mariadb:10.6
+    container_name: cct_mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - ${MYSQL_PORT:-33066}:3306
+    environment:
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - umbrella
+
+  php:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: cct_php
+    volumes:
+      - ./:/var/www/html:delegated
+    networks:
+      - umbrella
+
+  composer:
+    build:
+      context: ./dockerfiles
+      dockerfile: composer.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: cct_composer
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - php
+    user: laravel
+    entrypoint: ['composer', 'install', '--ignore-platform-reqs']
+    networks:
+      - umbrella

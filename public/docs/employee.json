@@ -1,0 +1,128 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Employee API",
+        "description": "List Employee API document"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Local"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Employee",
+            "description": "Employee api"
+        }
+    ],
+    "paths": {
+        "/employee": {
+            "get": {
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "List Employee",
+                "operationId": "employee_index",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "Employee 5": {
+                                            "Employee 4": {
+                                                "Employee 3": {
+                                                    "Employee 1": [],
+                                                    "Employee 2": []
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/search": {
+            "get": {
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "search Employee",
+                "operationId": "employee_seach",
+                "parameters": [
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Employee 2"
+                    },
+                    {
+                        "name": "filter[level]",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        },
+                        "example": 2
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "Employee 3": {
+                                        "Employee 2": []
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/import": {
+            "post": {
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "Import Employee",
+                "operationId": "employee_import",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": "{\"Employee 1\":\"Employee 3\",\"Employee 2\":\"Employee 3\",\"Employee 3\":\"Employee 4\",\"Employee 4\":\"Employee 5\"}"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
